@@ -39,6 +39,7 @@ void Level::parseLevel() {
 			char tile = levelData[y][x];
 			glm::vec4 desctRect(x*TILE_WIDTH, y*TILE_WIDTH, 
 									TILE_WIDTH, TILE_WIDTH);
+			glm::vec2 zombiePosition;
 			switch (tile)
 			{
 			case 'R':
@@ -59,6 +60,10 @@ void Level::parseLevel() {
 
 				break;
 			case 'Z':
+				levelData[y][x] = '.';
+				zombiePosition.x = x * TILE_WIDTH;
+				zombiePosition.y = y * TILE_WIDTH;
+				zombiesPosition.push_back(zombiePosition);
 				break;
 			case '.':
 				break;
