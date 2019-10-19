@@ -9,6 +9,7 @@
 #include "SpriteBacth.h"
 #include "Level.h"
 #include "InputManager.h"
+#include"SpriteGenerator.h"
 #include "Player.h"
 #include "Human.h"
 
@@ -32,6 +33,7 @@ private:
 	Camera2D _camera;
 	SpriteBacth _spriteBacth;
 	InputManager _inputManager;
+	vector<SpriteGenerator*> spriteGenerator;
 	vector<Level*> levels;
 	int currentLevel;
 	void initLevel();

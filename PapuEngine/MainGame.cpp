@@ -2,9 +2,11 @@
 #include "Sprite.h"
 #include "ImageLoader.h"
 #include <iostream>
+#include"SpriteGenerator.h"
 #include "ResourceManager.h"
 #include "PapuEngine.h"
-
+#include <random>
+#include <ctime>
 
 using namespace std;
 
@@ -24,7 +26,8 @@ void MainGame::initLevel(){
 	currentLevel = 0;
 	levels.push_back(new Level("Levels/level.txt"));
 	player = new Player();
-	player->init(1.0f,
+	
+	player->init(10.0f,
 		levels[currentLevel]->getPlayerPosition(),
 		&_inputManager);
 	_spriteBacth.init();
@@ -59,15 +62,18 @@ void MainGame::draw() {
 	_spriteBacth.begin();
 	levels[currentLevel]->draw();
 	player->draw(_spriteBacth);
+	for (size_t i = 0; i < spriteGenerator.size(); i++) {
+		spriteGenerator[i]->draw(_spriteBacth);
+	}
 	_spriteBacth.end();
 	_spriteBacth.renderBatch();
+	
 	
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	_program.unuse();
 	_window.swapBuffer();
 }
-
 void MainGame::procesInput() {
 	SDL_Event event;
 	const float CAMERA_SPEED = 20.0f;
@@ -76,48 +82,72 @@ void MainGame::procesInput() {
 	{
 		switch (event.type)
 		{
-			case SDL_QUIT:
-				_gameState = GameState::EXIT;
-				break;
-			case SDL_MOUSEMOTION:
-				_inputManager.setMouseCoords(event.motion.x,event.motion.y);
+		case SDL_QUIT:
+			_gameState = GameState::EXIT;
 			break;
-			case  SDL_KEYUP:
-				_inputManager.releaseKey(event.key.keysym.sym);
-				break;
-			case  SDL_KEYDOWN:
-				_inputManager.pressKey(event.key.keysym.sym);
-				break;
-			case SDL_MOUSEBUTTONDOWN:
-				_inputManager.pressKey(event.button.button);
-				break;
-			case SDL_MOUSEBUTTONUP:
-				_inputManager.releaseKey(event.button.button);
-				break;
+		case SDL_MOUSEMOTION:
+			_inputManager.setMouseCoords(event.motion.x, event.motion.y);
+			break;
+		case  SDL_KEYUP:
+			_inputManager.releaseKey(event.key.keysym.sym);
+			break;
+		case  SDL_KEYDOWN:
+			_inputManager.pressKey(event.key.keysym.sym);
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			_inputManager.pressKey(event.button.button);
+			break;
+		case SDL_MOUSEBUTTONUP:
+			_inputManager.releaseKey(event.button.button);
+			break;
 		}
 
-		/*if (_inputManager.isKeyPressed(SDLK_w)) {
-			_camera.setPosition(_camera.getPosition() + glm::vec2(0.0, CAMERA_SPEED));
+		std::mt19937 randomTime(time(nullptr));
+		std::uniform_int_distribution<int> randomX(1, TILE_WIDTH - 20);
+		std::uniform_int_distribution<int> randomY(1, TILE_WIDTH - 20);
+		_spriteBacth.init();
+
+		if (_inputManager.isKeyPressed(SDLK_a))
+		{
+			spriteGenerator.push_back(new SpriteGenerator());
+			glm::vec2 pos(randomX(randomTime)*TILE_WIDTH, randomY(randomTime)*TILE_WIDTH);
+			cout << player->getPosition().x << endl;
+			cout << player->getPosition().y << endl;
+			cout << pos.x << endl;
+			cout << pos.y<<endl;
+			cout << "-----------------------------" << endl;
+			spriteGenerator.back()->init(pos, 'A');
 		}
-		if (_inputManager.isKeyPressed(SDLK_s)) {
-			_camera.setPosition(_camera.getPosition() - glm::vec2(0.0, CAMERA_SPEED));
+		if (_inputManager.isKeyPressed(SDLK_b))
+		{
+			spriteGenerator.push_back(new SpriteGenerator());
+			glm::vec2 pos(randomX(randomTime)*TILE_WIDTH, randomY(randomTime)*TILE_WIDTH);
+			spriteGenerator.back()->init(pos, 'B');
+			cout << "ddd";
 		}
-		if (_inputManager.isKeyPressed(SDLK_a)) {
-			_camera.setPosition(_camera.getPosition() - glm::vec2(CAMERA_SPEED, 0.0));
+		if (_inputManager.isKeyPressed(SDLK_c))
+		{
+			spriteGenerator.push_back(new SpriteGenerator());
+			glm::vec2 pos(randomX(randomTime)*TILE_WIDTH, randomY(randomTime)*TILE_WIDTH);
+			spriteGenerator.back()->init(pos, 'C');
 		}
-		if (_inputManager.isKeyPressed(SDLK_d)) {
-			_camera.setPosition(_camera.getPosition() + glm::vec2(CAMERA_SPEED, 0.0));
-		}
-		if (_inputManager.isKeyPressed(SDLK_q)) {
-			_camera.setScale(_camera.getScale() + SCALE_SPEED);
+		if (_inputManager.isKeyPressed(SDLK_d))
+		{
+			spriteGenerator.push_back(new SpriteGenerator());
+			glm::vec2 pos(randomX(randomTime)*TILE_WIDTH, randomY(randomTime)*TILE_WIDTH);
+			spriteGenerator.back()->init(pos, 'D');
 		}
 		if (_inputManager.isKeyPressed(SDLK_e)) {
+			spriteGenerator.push_back(new SpriteGenerator());
+			glm::vec2 pos(randomX(randomTime)*TILE_WIDTH, randomY(randomTime)*TILE_WIDTH);
+			spriteGenerator.back()->init(pos, 'E');
+		}
+		if (_inputManager.isKeyPressed(SDLK_x)) {
+			_camera.setScale(_camera.getScale() + SCALE_SPEED);
+		}
+		if (_inputManager.isKeyPressed(SDLK_v)) {
 			_camera.setScale(_camera.getScale() - SCALE_SPEED);
 		}
-		if (_inputManager.isKeyPressed(SDL_BUTTON_LEFT)) {
-			glm::vec2 mouseCoords =  _camera.convertScreenToWorl(_inputManager.getMouseCoords());
-			cout << mouseCoords.x << " " << mouseCoords.y << endl;
-		}*/
 	}
 }
 
@@ -131,6 +161,7 @@ void MainGame::update() {
 		_camera.setPosition(player->getPosition());
 		player->update();
 	}
+	
 }
 
 

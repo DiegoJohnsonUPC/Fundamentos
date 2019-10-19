@@ -17,21 +17,23 @@ void Player::init(float _speed,
 }
 
 void Player::update() {
-	if (inputManager->isKeyPressed(SDLK_w)) {
+	if (inputManager->isKeyPressed(SDLK_UP)) {
 		position.y += speed;
 	}
 
-	if (inputManager->isKeyPressed(SDLK_s)) {
+	if (inputManager->isKeyPressed(SDLK_DOWN)) {
 		position.y -= speed;
 	}
 
-	if (inputManager->isKeyPressed(SDLK_a)) {
+	if (inputManager->isKeyPressed(SDLK_LEFT)) {
 		position.x -= speed;
 	}
 
-	if (inputManager->isKeyPressed(SDLK_d)) {
+	if (inputManager->isKeyPressed(SDLK_RIGHT)) {
 		position.x += speed;
 	}
+	
+	
 }
 
 
